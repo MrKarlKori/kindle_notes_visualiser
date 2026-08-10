@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-mono transition-colors duration-300;
+  }
+  
+  html.dark body {
+    @apply bg-crt-bg text-crt-text;
+  }
+  html:not(.dark) body {
+    @apply bg-blueprint-bg text-blueprint-text;
+  }
+}
+
+/* Subtle scanline effect for dark mode */
+html.dark body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 50;
+  pointer-events: none;
+}
