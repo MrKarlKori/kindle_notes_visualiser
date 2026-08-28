@@ -10,6 +10,7 @@ export const NotesProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'all');
+  const [filterType, setFilterType] = useState('All');
 
   useEffect(() => {
     // Apply theme
@@ -74,6 +75,8 @@ export const NotesProvider = ({ children }) => {
       toggleTheme, 
       activeTab, 
       setActiveTab,
+      filterType,
+      setFilterType,
       importNotes
     }}>
       {children}

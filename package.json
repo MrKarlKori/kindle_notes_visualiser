@@ -1,5 +1,5 @@
 {
-  "name": "temp_app",
+  "name": "Kindle Notes Visualizer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -20,7 +20,6 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@rolldown/binding-win32-x64-msvc": "^1.2.3",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.5",

@@ -5,11 +5,15 @@ import NoteCard from '../components/NoteCard';
 
 const AuthorDetail = () => {
   const { authorName } = useParams();
-  const { notes, isLoading } = useNotes();
+  const { notes, isLoading, filterType, setFilterType } = useNotes();
 
   const authorNotes = useMemo(() => {
-    return notes.filter(n => n.author === authorName);
-  }, [notes, authorName]);
+    let filtered = notes.filter(n => n.author === authorName);
+    if (filterType !== 'All') {
+      filtered = filtered.filter(n => n.type === filterType);
+    }
+    return filtered;
+  }, [notes, authorName, filterType]);
 
   const books = useMemo(() => {
     const grouped = authorNotes.reduce((acc, note) => {
@@ -35,15 +39,31 @@ const AuthorDetail = () => {
     <div>
       <div className="mb-8 border-b-4 border-current pb-4">
         <Link to="/" className="text-sm mb-4 inline-block hover:underline font-bold uppercase tracking-wider text-blueprint-accent dark:text-crt-amber">&lt; Return to Dashboard</Link>
-        <h1 className="text-3xl font-bold uppercase mb-2">Author: {authorName}</h1>
-        <a 
-          href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(authorName)}`} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-sm border-2 border-current px-2 py-1 inline-block hover:bg-current hover:text-crt-bg dark:hover:text-blueprint-bg transition-colors font-bold uppercase"
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+          <div>
+            <h1 className="text-3xl font-bold uppercase">Author: {authorName}</h1>
+          </div>
+          <a 
+            href={`https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(authorName)}`} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-sm border-2 border-current px-2 py-1 inline-block hover:bg-blueprint-text hover:text-blueprint-bg dark:hover:bg-crt-text dark:hover:text-crt-bg transition-colors font-bold uppercase whitespace-nowrap self-start"
+          >
+            Search on Wikipedia &#8599;
+          </a>
+        </div>
+      </div>
+
+      <div className="flex justify-end mb-6">
+        <select 
+          value={filterType} 
+          onChange={e => setFilterType(e.target.value)}
+          className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
         >
-          Search on Wikipedia &#8599;
-        </a>
+          <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
+          <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
+          <option value="Note" className="bg-blueprint-bg dark:bg-crt-bg text-current">Notes Only</option>
+        </select>
       </div>
 
       {Object.entries(books).map(([bookTitle, bNotes]) => (
@@ -55,7 +75,7 @@ const AuthorDetail = () => {
         </div>
       ))}
 
-      {authorNotes.length === 0 && <div className="text-center uppercase tracking-widest opacity-70">No records found for this author.</div>}
+      {authorNotes.length === 0 && <div className="text-center uppercase tracking-widest opacity-70">No records found for this author matching current filter.</div>}
     </div>
   );
 };
