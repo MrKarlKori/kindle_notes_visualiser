@@ -88,11 +88,11 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end pb-2 sm:pb-0">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end pb-2 sm:pb-0">
           <select 
             value={filterLanguage} 
             onChange={e => setFilterLanguage(e.target.value)}
-            className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
             {availableLanguages.map(lang => (
@@ -105,7 +105,7 @@ const Dashboard = () => {
           <select 
             value={filterType} 
             onChange={e => setFilterType(e.target.value)}
-            className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
             <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
@@ -116,7 +116,7 @@ const Dashboard = () => {
             <select 
               value={sortOrder} 
               onChange={e => setSortOrder(e.target.value)}
-              className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+              className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
             >
               <option value="date-desc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Newest First</option>
               <option value="date-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Oldest First</option>

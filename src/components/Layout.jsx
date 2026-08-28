@@ -10,20 +10,19 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen p-4 md:p-8 font-mono">
-      <header className="max-w-4xl mx-auto mb-8 flex justify-between items-center border-b-2 border-current pb-4">
-        <div className="relative group">
+      <header className="max-w-4xl mx-auto mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 border-b-2 border-current pb-4">
+        <div className="relative group text-center sm:text-left w-full sm:w-auto">
           <Link 
             to="/" 
-            // title="Return to Dashboard"
-            className="text-2xl font-bold uppercase tracking-wider hover:opacity-80 transition-opacity block"
+            className="text-xl sm:text-2xl font-bold uppercase tracking-wider hover:opacity-80 transition-opacity block truncate"
           >
             Kindle_Visualizer.exe
           </Link>
-          <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg text-xs px-2 py-1 border border-current font-bold uppercase whitespace-nowrap z-20 pointer-events-none shadow-sm">
+          <div className="absolute left-0 top-full mt-1 hidden sm:group-hover:block bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg text-xs px-2 py-1 border border-current font-bold uppercase whitespace-nowrap z-20 pointer-events-none shadow-sm">
             Go to Dashboard
           </div>
         </div>
-        <nav className="flex gap-4 items-center">
+        <nav className="flex gap-4 items-center justify-center w-full sm:w-auto">
           <div className="relative group">
             <Link 
               to="/settings" 

@@ -68,11 +68,11 @@ const AuthorDetail = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap justify-end gap-2 mb-6">
+      <div className="flex flex-col sm:flex-row flex-wrap justify-start sm:justify-end gap-2 mb-6">
         <select 
           value={filterLanguage} 
           onChange={e => setFilterLanguage(e.target.value)}
-          className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+          className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
         >
           <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
           {availableLanguages.map(lang => (
@@ -85,7 +85,7 @@ const AuthorDetail = () => {
         <select 
           value={filterType} 
           onChange={e => setFilterType(e.target.value)}
-          className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+          className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
         >
           <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
           <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
