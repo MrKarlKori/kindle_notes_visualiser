@@ -5,15 +5,29 @@ import NoteCard from '../components/NoteCard';
 
 const AuthorDetail = () => {
   const { authorName } = useParams();
-  const { notes, isLoading, filterType, setFilterType } = useNotes();
+  const { 
+    notes, 
+    isLoading, 
+    filterType, 
+    setFilterType, 
+    filterLanguage, 
+    setFilterLanguage, 
+    availableLanguages 
+  } = useNotes();
 
   const authorNotes = useMemo(() => {
-    let filtered = notes.filter(n => n.author === authorName);
-    if (filterType !== 'All') {
-      filtered = filtered.filter(n => n.type === filterType);
-    }
-    return filtered;
-  }, [notes, authorName, filterType]);
+    return notes.filter(n => {
+      if (n.author !== authorName) return false;
+      if (filterType !== 'All' && n.type !== filterType) return false;
+      if (filterLanguage !== 'All') {
+        const noteLang = n.language && typeof n.language === 'string' && n.language.trim() !== '' 
+          ? n.language.trim() 
+          : 'Unspecified';
+        if (noteLang !== filterLanguage) return false;
+      }
+      return true;
+    });
+  }, [notes, authorName, filterType, filterLanguage]);
 
   const books = useMemo(() => {
     const grouped = authorNotes.reduce((acc, note) => {
@@ -54,7 +68,20 @@ const AuthorDetail = () => {
         </div>
       </div>
 
-      <div className="flex justify-end mb-6">
+      <div className="flex flex-wrap justify-end gap-2 mb-6">
+        <select 
+          value={filterLanguage} 
+          onChange={e => setFilterLanguage(e.target.value)}
+          className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+        >
+          <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
+          {availableLanguages.map(lang => (
+            <option key={lang} value={lang} className="bg-blueprint-bg dark:bg-crt-bg text-current">
+              {lang}
+            </option>
+          ))}
+        </select>
+
         <select 
           value={filterType} 
           onChange={e => setFilterType(e.target.value)}

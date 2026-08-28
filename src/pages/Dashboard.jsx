@@ -4,7 +4,17 @@ import { useNotes } from '../context/NotesContext';
 import NoteCard from '../components/NoteCard';
 
 const Dashboard = () => {
-  const { notes, isLoading, activeTab, setActiveTab, filterType, setFilterType } = useNotes();
+  const { 
+    notes, 
+    isLoading, 
+    activeTab, 
+    setActiveTab, 
+    filterType, 
+    setFilterType, 
+    filterLanguage, 
+    setFilterLanguage, 
+    availableLanguages 
+  } = useNotes();
   const [sortOrder, setSortOrder] = useState('date-desc');
 
   const tabs = [
@@ -14,9 +24,21 @@ const Dashboard = () => {
   ];
 
   const filteredNotes = useMemo(() => {
-    if (filterType === 'All') return notes;
-    return notes.filter(n => n.type === filterType);
-  }, [notes, filterType]);
+    return notes.filter(n => {
+      if (filterType !== 'All' && n.type !== filterType) {
+        return false;
+      }
+      if (filterLanguage !== 'All') {
+        const noteLang = n.language && typeof n.language === 'string' && n.language.trim() !== '' 
+          ? n.language.trim() 
+          : 'Unspecified';
+        if (noteLang !== filterLanguage) {
+          return false;
+        }
+      }
+      return true;
+    });
+  }, [notes, filterType, filterLanguage]);
 
   const sortedNotes = useMemo(() => {
     return [...filteredNotes].sort((a, b) => {
@@ -67,6 +89,19 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end pb-2 sm:pb-0">
+          <select 
+            value={filterLanguage} 
+            onChange={e => setFilterLanguage(e.target.value)}
+            className="bg-transparent border-2 border-current p-1 uppercase text-sm outline-none font-bold cursor-pointer"
+          >
+            <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
+            {availableLanguages.map(lang => (
+              <option key={lang} value={lang} className="bg-blueprint-bg dark:bg-crt-bg text-current">
+                {lang}
+              </option>
+            ))}
+          </select>
+
           <select 
             value={filterType} 
             onChange={e => setFilterType(e.target.value)}

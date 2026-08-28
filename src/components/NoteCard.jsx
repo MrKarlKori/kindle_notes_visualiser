@@ -85,7 +85,14 @@ const NoteCard = ({ note, showMetadata = true }) => {
           </div>
           <div className="flex flex-col items-start sm:items-end mt-2 sm:mt-0 gap-1">
             <div>{formatDate(note.date_added)}</div>
-            <div className="text-xs uppercase font-bold text-blueprint-accent dark:text-crt-amber">{note.type}</div>
+            <div className="flex items-center gap-1.5">
+              {note.language && (
+                <span className="text-xs px-1 border border-current font-bold uppercase opacity-75">
+                  {note.language}
+                </span>
+              )}
+              <span className="text-xs uppercase font-bold text-blueprint-accent dark:text-crt-amber">{note.type}</span>
+            </div>
           </div>
         </div>
       )}
@@ -94,6 +101,12 @@ const NoteCard = ({ note, showMetadata = true }) => {
         <div className="mb-4 pb-2 border-b-2 border-current/20 flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm opacity-80 gap-2">
           <div className="flex items-center gap-2">
             <span className="font-bold uppercase tracking-wider text-blueprint-accent dark:text-crt-amber">{note.type}</span>
+            {note.language && (
+              <>
+                <span>•</span>
+                <span className="font-bold uppercase opacity-75">{note.language}</span>
+              </>
+            )}
             {locationText && (
               <>
                 <span>•</span>

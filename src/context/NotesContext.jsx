@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { get, set } from 'idb-keyval';
 
 const NotesContext = createContext();
@@ -11,6 +11,24 @@ export const NotesProvider = ({ children }) => {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'all');
   const [filterType, setFilterType] = useState('All');
+  const [filterLanguage, setFilterLanguage] = useState('All');
+
+  const availableLanguages = useMemo(() => {
+    const langSet = new Set();
+    let hasUnspecified = false;
+    notes.forEach(note => {
+      if (note.language && typeof note.language === 'string' && note.language.trim() !== '') {
+        langSet.add(note.language.trim());
+      } else {
+        hasUnspecified = true;
+      }
+    });
+    const sorted = Array.from(langSet).sort((a, b) => a.localeCompare(b));
+    if (hasUnspecified) {
+      sorted.push('Unspecified');
+    }
+    return sorted;
+  }, [notes]);
 
   useEffect(() => {
     // Apply theme
@@ -77,6 +95,9 @@ export const NotesProvider = ({ children }) => {
       setActiveTab,
       filterType,
       setFilterType,
+      filterLanguage,
+      setFilterLanguage,
+      availableLanguages,
       importNotes
     }}>
       {children}
