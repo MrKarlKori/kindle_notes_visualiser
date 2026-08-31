@@ -35,10 +35,14 @@ export const NotesProvider = ({ children }) => {
   useEffect(() => {
     // Apply theme
     const root = window.document.documentElement;
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    
     if (theme === 'dark') {
       root.classList.add('dark');
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#000000');
     } else {
       root.classList.remove('dark');
+      if (metaThemeColor) metaThemeColor.setAttribute('content', '#f4ebd8');
     }
     localStorage.setItem('theme', theme);
   }, [theme]);
