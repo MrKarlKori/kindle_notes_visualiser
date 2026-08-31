@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotes } from '../context/NotesContext';
 import NoteCard from '../components/NoteCard';
+import StatsHeatmap from '../components/StatsHeatmap';
 
 const Dashboard = () => {
   const { 
@@ -24,7 +25,8 @@ const Dashboard = () => {
     { id: 'all', label: 'See All' },
     { id: 'favorites', label: 'Favorites' },
     { id: 'authors', label: 'Authors' },
-    { id: 'books', label: 'Books' }
+    { id: 'books', label: 'Books' },
+    { id: 'stats', label: 'Stats' }
   ];
 
   const filteredNotes = useMemo(() => {
@@ -82,12 +84,12 @@ const Dashboard = () => {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center border-b-2 border-current mb-6 pb-3 gap-3">
-        <div className="grid grid-cols-4 w-full lg:w-auto sm:flex gap-1">
+        <div className="grid grid-cols-5 w-full lg:w-auto sm:flex gap-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-1 sm:px-4 py-1.5 sm:py-2 uppercase font-bold text-[11px] min-[380px]:text-xs sm:text-sm text-center border-2 border-transparent whitespace-nowrap truncate shrink-0 ${
+              className={`px-1 sm:px-4 py-1.5 sm:py-2 uppercase font-bold text-[10px] min-[380px]:text-xs sm:text-sm text-center border-2 border-transparent whitespace-nowrap truncate shrink-0 ${
                 activeTab === tab.id 
                   ? 'bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg' 
                   : 'hover:bg-blueprint-text/10 dark:hover:bg-crt-text/10'
@@ -98,6 +100,7 @@ const Dashboard = () => {
           ))}
         </div>
 
+        {activeTab !== "stats" && (
         <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full lg:flex lg:flex-row lg:w-auto justify-start sm:justify-end">
           <select 
             value={filterLanguage} 
@@ -145,6 +148,7 @@ const Dashboard = () => {
             </select>
           )}
         </div>
+        )}
       </div>
 
       {(activeTab === 'all' || activeTab === 'favorites') && (
@@ -173,6 +177,12 @@ const Dashboard = () => {
             ))}
           </div>
           {authors.length === 0 && <div className="text-center mt-10 uppercase tracking-widest opacity-70">No authors found matching current filter.</div>}
+        </div>
+      )}
+
+      {activeTab === 'stats' && (
+        <div className="mt-4">
+          <StatsHeatmap notes={notes} />
         </div>
       )}
 
