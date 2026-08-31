@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useNotes } from '../context/NotesContext';
 
 const expectedSchema = `[
@@ -18,6 +20,7 @@ const expectedSchema = `[
 ]`;
 
 const Settings = () => {
+  const navigate = useNavigate();
   const { importNotes } = useNotes();
   const [status, setStatus] = useState('');
 
@@ -44,7 +47,21 @@ const Settings = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold border-b-4 border-current pb-4 mb-8 uppercase">System Settings</h1>
+      <div className="flex items-center gap-3 border-b-4 border-current pb-4 mb-8">
+        <div className="relative group">
+          <button 
+            onClick={() => navigate(-1)}
+            className="p-1.5 border-2 border-current hover:bg-blueprint-text hover:text-blueprint-bg dark:hover:bg-crt-text dark:hover:text-crt-bg transition-colors flex items-center justify-center cursor-pointer"
+            aria-label="Go Back"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div className="absolute left-0 top-full mt-1 hidden group-hover:block bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg text-xs px-2 py-1 border border-current font-bold uppercase whitespace-nowrap z-20 pointer-events-none shadow-sm">
+            Go Back
+          </div>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-bold uppercase">System Settings</h1>
+      </div>
       
       <div className="mb-12">
         <h2 className="text-xl font-bold mb-4 uppercase text-blueprint-accent dark:text-crt-amber">Data Ingestion</h2>

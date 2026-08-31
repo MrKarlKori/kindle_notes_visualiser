@@ -82,12 +82,12 @@ const Dashboard = () => {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center border-b-2 border-current mb-6 pb-3 gap-3">
-        <div className="flex overflow-x-auto max-w-full pb-1 sm:pb-0 gap-1">
+        <div className="grid grid-cols-4 w-full lg:w-auto sm:flex gap-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 uppercase font-bold border-2 border-transparent whitespace-nowrap shrink-0 ${
+              className={`px-1 sm:px-4 py-1.5 sm:py-2 uppercase font-bold text-[11px] min-[380px]:text-xs sm:text-sm text-center border-2 border-transparent whitespace-nowrap truncate shrink-0 ${
                 activeTab === tab.id 
                   ? 'bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg' 
                   : 'hover:bg-blueprint-text/10 dark:hover:bg-crt-text/10'
@@ -98,11 +98,11 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full lg:w-auto justify-start sm:justify-end">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full lg:flex lg:flex-row lg:w-auto justify-start sm:justify-end">
           <select 
             value={filterLanguage} 
             onChange={e => setFilterLanguage(e.target.value)}
-            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
             {availableLanguages.map(lang => (
@@ -115,7 +115,7 @@ const Dashboard = () => {
           <select 
             value={filterType} 
             onChange={e => setFilterType(e.target.value)}
-            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
             <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
@@ -126,7 +126,7 @@ const Dashboard = () => {
             <select 
               value={filterFavorite} 
               onChange={e => setFilterFavorite(e.target.value)}
-              className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
             >
               <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Notes</option>
               <option value="Favorites" className="bg-blueprint-bg dark:bg-crt-bg text-current">Favorites Only</option>
@@ -137,7 +137,7 @@ const Dashboard = () => {
             <select 
               value={sortOrder} 
               onChange={e => setSortOrder(e.target.value)}
-              className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
             >
               <option value="date-desc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Newest First</option>
               <option value="date-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Oldest First</option>
