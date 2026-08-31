@@ -12,7 +12,8 @@ const expectedSchema = `[
     "content": "...",
     "related_highlight": "...", // Optional
     "author": "Author Name",
-    "book_title": "Book Title"
+    "book_title": "Book Title",
+    "language": "en" // Optional
   }
 ]`;
 

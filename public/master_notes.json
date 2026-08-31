@@ -8,7 +8,8 @@
     "date_added": "Wednesday, 22 November 2023 01:25:21",
     "content": "This is a test highlight for the retro-futuristic app. It demonstrates brutalist design principles applied to web components.",
     "author": "Test Author",
-    "book_title": "Test Book Title"
+    "book_title": "Test Book Title",
+    "language": "English"
   },
   {
     "id": "2",
@@ -20,7 +21,8 @@
     "content": "Make sure to style this note so it stands out below the highlight.",
     "related_highlight": "This is a test highlight for the retro-futuristic app. It demonstrates brutalist design principles applied to web components.",
     "author": "Test Author",
-    "book_title": "Test Book Title"
+    "book_title": "Test Book Title",
+    "language": "English"
   },
   {
     "id": "3",
