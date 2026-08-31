@@ -5,13 +5,13 @@ import { Copy, Check, Quote, FileText, Star } from 'lucide-react';
 import { useNotes } from '../context/NotesContext';
 
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return 'Unknown Date';
   try {
     const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
+    if (isNaN(d.getTime())) return 'Unknown Date';
     return format(d, 'MMM dd, yyyy HH:mm');
   } catch (e) {
-    return dateString;
+    return 'Unknown Date';
   }
 };
 
@@ -63,7 +63,7 @@ const CopyButton = ({ text, tooltipLabel = 'Copy Highlight', icon }) => {
 const NoteCard = ({ note, showMetadata = true }) => {
   const { favorites, toggleFavorite } = useNotes();
   const isFavorite = favorites.includes(note.id);
-  const isMissingMeta = note.author === 'Unknown' || note.book_title === 'Unknown';
+  const isMissingMeta = !note.author || note.author === 'Unknown' || !note.book_title || note.book_title === 'Unknown';
   const locationText = cleanLocation(note.location);
 
   return (

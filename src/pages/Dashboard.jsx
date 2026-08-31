@@ -20,7 +20,7 @@ const Dashboard = () => {
     favorites
   } = useNotes();
   const [sortOrder, setSortOrder] = useState('date-desc');
-
+  const [searchQuery, setSearchQuery] = useState('');
   const tabs = [
     { id: 'all', label: 'See All' },
     { id: 'favorites', label: 'Favorites' },
@@ -48,9 +48,19 @@ const Dashboard = () => {
           return false;
         }
       }
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (
+          !(n.content && n.content.toLowerCase().includes(query)) &&
+          !(n.book_title && n.book_title.toLowerCase().includes(query)) &&
+          !(n.author && n.author.toLowerCase().includes(query))
+        ) {
+          return false;
+        }
+      }
       return true;
     });
-  }, [notes, filterType, filterLanguage, filterFavorite, activeTab, favorites]);
+  }, [notes, filterType, filterLanguage, filterFavorite, activeTab, favorites, searchQuery]);
 
   const sortedNotes = useMemo(() => {
     return [...filteredNotes].sort((a, b) => {
@@ -79,6 +89,14 @@ const Dashboard = () => {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [filteredNotes]);
 
+  const hasActiveFilters = filterLanguage !== 'All' || filterType !== 'All' || filterFavorite !== 'All' || searchQuery !== '';
+  const clearFilters = () => {
+    setFilterLanguage('All');
+    setFilterType('All');
+    setFilterFavorite('All');
+    setSearchQuery('');
+  };
+
   if (isLoading) return <div className="text-center animate-pulse mt-20 font-bold uppercase tracking-widest text-2xl">Loading Data...</div>;
 
   return (
@@ -101,11 +119,19 @@ const Dashboard = () => {
         </div>
 
         {activeTab !== "stats" && (
-        <div className="grid grid-cols-2 gap-1.5 sm:gap-2 w-full lg:flex lg:flex-row lg:w-auto justify-start sm:justify-end">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full lg:w-auto justify-start sm:justify-end items-center">
+          <input
+            type="text"
+            placeholder="Search notes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 text-xs sm:text-sm outline-none font-bold w-full sm:w-auto placeholder:text-current placeholder:opacity-50"
+          />
+          
           <select 
             value={filterLanguage} 
             onChange={e => setFilterLanguage(e.target.value)}
-            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-[48%] sm:w-auto truncate"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
             {availableLanguages.map(lang => (
@@ -146,6 +172,15 @@ const Dashboard = () => {
               <option value="date-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Oldest First</option>
               <option value="title-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Title A-Z</option>
             </select>
+          )}
+
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm font-bold cursor-pointer hover:bg-blueprint-text hover:text-blueprint-bg dark:hover:bg-crt-text dark:hover:text-crt-bg transition-colors"
+            >
+              Clear Filters
+            </button>
           )}
         </div>
         )}
