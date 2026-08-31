@@ -12,6 +12,8 @@ export const NotesProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState(localStorage.getItem('activeTab') || 'all');
   const [filterType, setFilterType] = useState('All');
   const [filterLanguage, setFilterLanguage] = useState('All');
+  const [filterFavorite, setFilterFavorite] = useState('All');
+  const [favorites, setFavorites] = useState([]);
 
   const availableLanguages = useMemo(() => {
     const langSet = new Set();
@@ -46,7 +48,7 @@ export const NotesProvider = ({ children }) => {
   }, [activeTab]);
 
   useEffect(() => {
-    const loadNotes = async () => {
+    const loadData = async () => {
       try {
         // First check IndexedDB
         let storedNotes = await get('master_notes');
@@ -63,15 +65,19 @@ export const NotesProvider = ({ children }) => {
         }
         
         setNotes(storedNotes || []);
+
+        // Load favorites
+        let storedFavorites = await get('favorite_notes');
+        setFavorites(storedFavorites || []);
       } catch (error) {
-        console.error("Failed to load notes", error);
+        console.error("Failed to load data", error);
         setNotes([]);
       } finally {
         setIsLoading(false);
       }
     };
     
-    loadNotes();
+    loadData();
   }, []);
 
   const importNotes = async (parsedJson) => {
@@ -83,6 +89,16 @@ export const NotesProvider = ({ children }) => {
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const toggleFavorite = (noteId) => {
+    setFavorites(prev => {
+      const newFavs = prev.includes(noteId) 
+        ? prev.filter(id => id !== noteId)
+        : [...prev, noteId];
+      set('favorite_notes', newFavs);
+      return newFavs;
+    });
   };
 
   return (
@@ -97,8 +113,12 @@ export const NotesProvider = ({ children }) => {
       setFilterType,
       filterLanguage,
       setFilterLanguage,
+      filterFavorite,
+      setFilterFavorite,
       availableLanguages,
-      importNotes
+      importNotes,
+      favorites,
+      toggleFavorite
     }}>
       {children}
     </NotesContext.Provider>

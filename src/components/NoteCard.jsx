@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Copy, Check, Quote, FileText } from 'lucide-react';
+import { Copy, Check, Quote, FileText, Star } from 'lucide-react';
+import { useNotes } from '../context/NotesContext';
 
 const formatDate = (dateString) => {
   if (!dateString) return '';
@@ -60,6 +61,8 @@ const CopyButton = ({ text, tooltipLabel = 'Copy Highlight', icon }) => {
 };
 
 const NoteCard = ({ note, showMetadata = true }) => {
+  const { favorites, toggleFavorite } = useNotes();
+  const isFavorite = favorites.includes(note.id);
   const isMissingMeta = note.author === 'Unknown' || note.book_title === 'Unknown';
   const locationText = cleanLocation(note.location);
 
@@ -86,6 +89,14 @@ const NoteCard = ({ note, showMetadata = true }) => {
           <div className="flex flex-col items-start sm:items-end mt-2 sm:mt-0 gap-1">
             <div>{formatDate(note.date_added)}</div>
             <div className="flex items-center gap-1.5">
+              <button 
+                onClick={(e) => { e.preventDefault(); toggleFavorite(note.id); }}
+                className="hover:opacity-80 transition-opacity"
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Star size={16} className={isFavorite ? "fill-blueprint-text dark:fill-crt-text text-blueprint-text dark:text-crt-text" : "text-blueprint-text dark:text-crt-text"} />
+              </button>
               {note.language && (
                 <span className="text-xs px-1 border border-current font-bold uppercase opacity-75">
                   {note.language}
@@ -100,6 +111,14 @@ const NoteCard = ({ note, showMetadata = true }) => {
       {!showMetadata && (
         <div className="mb-4 pb-2 border-b-2 border-current/20 flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm opacity-80 gap-2">
           <div className="flex items-center gap-2">
+            <button 
+              onClick={(e) => { e.preventDefault(); toggleFavorite(note.id); }}
+              className="hover:opacity-80 transition-opacity"
+              title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Star size={16} className={isFavorite ? "fill-blueprint-accent dark:fill-crt-amber text-blueprint-accent dark:text-crt-amber" : "text-blueprint-accent dark:text-crt-amber"} />
+            </button>
             <span className="font-bold uppercase tracking-wider text-blueprint-accent dark:text-crt-amber">{note.type}</span>
             {note.language && (
               <>

@@ -13,18 +13,28 @@ const Dashboard = () => {
     setFilterType, 
     filterLanguage, 
     setFilterLanguage, 
-    availableLanguages 
+    filterFavorite,
+    setFilterFavorite,
+    availableLanguages,
+    favorites
   } = useNotes();
   const [sortOrder, setSortOrder] = useState('date-desc');
 
   const tabs = [
     { id: 'all', label: 'See All' },
+    { id: 'favorites', label: 'Favorites' },
     { id: 'authors', label: 'Authors' },
     { id: 'books', label: 'Books' }
   ];
 
   const filteredNotes = useMemo(() => {
     return notes.filter(n => {
+      if (activeTab === 'favorites' && !favorites.includes(n.id)) {
+        return false;
+      }
+      if (filterFavorite === 'Favorites' && !favorites.includes(n.id)) {
+        return false;
+      }
       if (filterType !== 'All' && n.type !== filterType) {
         return false;
       }
@@ -38,7 +48,7 @@ const Dashboard = () => {
       }
       return true;
     });
-  }, [notes, filterType, filterLanguage]);
+  }, [notes, filterType, filterLanguage, filterFavorite, activeTab, favorites]);
 
   const sortedNotes = useMemo(() => {
     return [...filteredNotes].sort((a, b) => {
@@ -71,13 +81,13 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-current mb-6 pb-2 sm:pb-0 gap-4">
-        <div className="flex overflow-x-auto w-full sm:w-auto">
+      <div className="flex flex-wrap justify-between items-center border-b-2 border-current mb-6 pb-3 gap-3">
+        <div className="flex overflow-x-auto max-w-full pb-1 sm:pb-0 gap-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 uppercase font-bold border-2 border-transparent border-b-0 ${
+              className={`px-4 py-2 uppercase font-bold border-2 border-transparent whitespace-nowrap shrink-0 ${
                 activeTab === tab.id 
                   ? 'bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg' 
                   : 'hover:bg-blueprint-text/10 dark:hover:bg-crt-text/10'
@@ -88,7 +98,7 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end pb-2 sm:pb-0">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full lg:w-auto justify-start sm:justify-end">
           <select 
             value={filterLanguage} 
             onChange={e => setFilterLanguage(e.target.value)}
@@ -112,7 +122,18 @@ const Dashboard = () => {
             <option value="Note" className="bg-blueprint-bg dark:bg-crt-bg text-current">Notes Only</option>
           </select>
 
-          {activeTab === 'all' && (
+          {activeTab !== 'favorites' && (
+            <select 
+              value={filterFavorite} 
+              onChange={e => setFilterFavorite(e.target.value)}
+              className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+            >
+              <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Notes</option>
+              <option value="Favorites" className="bg-blueprint-bg dark:bg-crt-bg text-current">Favorites Only</option>
+            </select>
+          )}
+
+          {(activeTab === 'all' || activeTab === 'favorites') && (
             <select 
               value={sortOrder} 
               onChange={e => setSortOrder(e.target.value)}
@@ -126,7 +147,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {activeTab === 'all' && (
+      {(activeTab === 'all' || activeTab === 'favorites') && (
         <div>
           {sortedNotes.map(note => (
             <NoteCard key={note.id} note={note} />

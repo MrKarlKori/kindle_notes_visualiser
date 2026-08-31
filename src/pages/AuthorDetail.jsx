@@ -12,12 +12,16 @@ const AuthorDetail = () => {
     setFilterType, 
     filterLanguage, 
     setFilterLanguage, 
-    availableLanguages 
+    filterFavorite,
+    setFilterFavorite,
+    availableLanguages,
+    favorites
   } = useNotes();
 
   const authorNotes = useMemo(() => {
     return notes.filter(n => {
       if (n.author !== authorName) return false;
+      if (filterFavorite === 'Favorites' && !favorites.includes(n.id)) return false;
       if (filterType !== 'All' && n.type !== filterType) return false;
       if (filterLanguage !== 'All') {
         const noteLang = n.language && typeof n.language === 'string' && n.language.trim() !== '' 
@@ -27,7 +31,7 @@ const AuthorDetail = () => {
       }
       return true;
     });
-  }, [notes, authorName, filterType, filterLanguage]);
+  }, [notes, authorName, filterType, filterLanguage, filterFavorite, favorites]);
 
   const books = useMemo(() => {
     const grouped = authorNotes.reduce((acc, note) => {
@@ -90,6 +94,15 @@ const AuthorDetail = () => {
           <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
           <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
           <option value="Note" className="bg-blueprint-bg dark:bg-crt-bg text-current">Notes Only</option>
+        </select>
+
+        <select 
+          value={filterFavorite} 
+          onChange={e => setFilterFavorite(e.target.value)}
+          className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+        >
+          <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Notes</option>
+          <option value="Favorites" className="bg-blueprint-bg dark:bg-crt-bg text-current">Favorites Only</option>
         </select>
       </div>
 

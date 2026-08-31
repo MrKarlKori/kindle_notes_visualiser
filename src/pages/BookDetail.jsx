@@ -12,7 +12,10 @@ const BookDetail = () => {
     setFilterType, 
     filterLanguage, 
     setFilterLanguage, 
-    availableLanguages 
+    filterFavorite,
+    setFilterFavorite,
+    availableLanguages,
+    favorites
   } = useNotes();
 
   const author = useMemo(() => {
@@ -23,6 +26,7 @@ const BookDetail = () => {
     return notes
       .filter(n => {
         if (n.book_title !== bookTitle) return false;
+        if (filterFavorite === 'Favorites' && !favorites.includes(n.id)) return false;
         if (filterType !== 'All' && n.type !== filterType) return false;
         if (filterLanguage !== 'All') {
           const noteLang = n.language && typeof n.language === 'string' && n.language.trim() !== '' 
@@ -37,7 +41,7 @@ const BookDetail = () => {
         const locB = parseInt(b.location.match(/\d+/)?.[0] || '0');
         return locA - locB;
       });
-  }, [notes, bookTitle, filterType, filterLanguage]);
+  }, [notes, bookTitle, filterType, filterLanguage, filterFavorite, favorites]);
 
   if (isLoading) return <div className="text-center animate-pulse mt-20 font-bold uppercase tracking-widest text-2xl">Loading Data...</div>;
 
@@ -83,6 +87,15 @@ const BookDetail = () => {
           <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
           <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
           <option value="Note" className="bg-blueprint-bg dark:bg-crt-bg text-current">Notes Only</option>
+        </select>
+
+        <select 
+          value={filterFavorite} 
+          onChange={e => setFilterFavorite(e.target.value)}
+          className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+        >
+          <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Notes</option>
+          <option value="Favorites" className="bg-blueprint-bg dark:bg-crt-bg text-current">Favorites Only</option>
         </select>
       </div>
 
