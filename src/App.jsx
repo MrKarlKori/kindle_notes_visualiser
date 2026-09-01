@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import AuthorDetail from './pages/AuthorDetail';
 import BookDetail from './pages/BookDetail';
 import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/author/:authorName" element={<AuthorDetail />} />
           <Route path="/book/:bookTitle" element={<BookDetail />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>
     </HashRouter>

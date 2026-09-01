@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Copy, Check, Quote, FileText } from 'lucide-react';
+import { Copy, Check, Quote, FileText, Star } from 'lucide-react';
+import { useNotes } from '../context/NotesContext';
 
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return 'Unknown Date';
   try {
     const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
+    if (isNaN(d.getTime())) return 'Unknown Date';
     return format(d, 'MMM dd, yyyy HH:mm');
   } catch (e) {
-    return dateString;
+    return 'Unknown Date';
   }
 };
 
@@ -60,62 +61,74 @@ const CopyButton = ({ text, tooltipLabel = 'Copy Highlight', icon }) => {
 };
 
 const NoteCard = ({ note, showMetadata = true }) => {
-  const isMissingMeta = note.author === 'Unknown' || note.book_title === 'Unknown';
+  const { favorites, toggleFavorite } = useNotes();
+  const isFavorite = favorites.includes(note.id);
+  const isMissingMeta = !note.author || note.author === 'Unknown' || !note.book_title || note.book_title === 'Unknown';
   const locationText = cleanLocation(note.location);
 
   return (
-    <div className="border-2 border-current p-4 mb-6 shadow-brutal dark:shadow-none dark:border-crt-text/50 hover:border-current transition-colors bg-white/5 dark:bg-black/50">
+    <div className="border-2 border-current p-3 sm:p-4 mb-4 sm:mb-6 shadow-brutal dark:shadow-none dark:border-crt-text/50 hover:border-current transition-colors bg-white/5 dark:bg-black/50">
       
       {showMetadata && (
-        <div className="mb-4 pb-2 border-b-2 border-current/20 flex flex-col sm:flex-row justify-between text-sm opacity-80">
-          <div className="flex flex-col">
-            <Link 
-              to={`/book/${encodeURIComponent(note.book_title)}`} 
-              className={`hover:underline font-bold ${note.book_title === 'Unknown' ? 'text-blueprint-accent dark:text-crt-amber' : ''}`}
-            >
-              {note.book_title}
-            </Link>
-            <Link 
-              to={`/author/${encodeURIComponent(note.author)}`} 
-              className={`hover:underline ${note.author === 'Unknown' ? 'text-blueprint-accent dark:text-crt-amber' : ''}`}
-            >
-              by {note.author}
-            </Link>
-            {locationText && <span className="text-xs opacity-70 mt-1">{locationText}</span>}
-          </div>
-          <div className="flex flex-col items-start sm:items-end mt-2 sm:mt-0 gap-1">
-            <div>{formatDate(note.date_added)}</div>
-            <div className="flex items-center gap-1.5">
-              {note.language && (
-                <span className="text-xs px-1 border border-current font-bold uppercase opacity-75">
-                  {note.language}
-                </span>
-              )}
-              <span className="text-xs uppercase font-bold text-blueprint-accent dark:text-crt-amber">{note.type}</span>
+        <div className="mb-2.5 pb-2 border-b border-current/20 flex justify-between items-start gap-2 text-xs sm:text-sm opacity-85">
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline gap-x-1.5 leading-snug">
+              <Link 
+                to={`/book/${encodeURIComponent(note.book_title)}`} 
+                className={`hover:underline font-bold truncate max-w-full ${note.book_title === 'Unknown' ? 'text-blueprint-accent dark:text-crt-amber' : ''}`}
+              >
+                {note.book_title}
+              </Link>
+              <span className="opacity-75 text-[11px] sm:text-xs whitespace-nowrap">
+                by <Link 
+                  to={`/author/${encodeURIComponent(note.author)}`} 
+                  className={`hover:underline ${note.author === 'Unknown' ? 'text-blueprint-accent dark:text-crt-amber' : ''}`}
+                >
+                  {note.author}
+                </Link>
+              </span>
             </div>
+            {locationText && <div className="text-[11px] sm:text-xs opacity-70 mt-0.5">{locationText}</div>}
+          </div>
+
+          <div className="flex flex-col items-end shrink-0 gap-0.5 text-right">
+            <div className="flex items-center gap-1.5">
+              <button 
+                onClick={(e) => { e.preventDefault(); toggleFavorite(note.id); }}
+                className="hover:opacity-80 transition-opacity p-0.5"
+                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Star size={14} className={`sm:w-4 sm:h-4 ${isFavorite ? "fill-blueprint-text dark:fill-crt-text text-blueprint-text dark:text-crt-text" : "text-blueprint-text dark:text-crt-text"} shrink-0`} />
+              </button>
+              <span className="text-[11px] sm:text-xs uppercase font-bold text-blueprint-accent dark:text-crt-amber">{note.type}</span>
+            </div>
+            <div className="text-[11px] sm:text-xs opacity-70 whitespace-nowrap">{formatDate(note.date_added)}</div>
           </div>
         </div>
       )}
 
       {!showMetadata && (
-        <div className="mb-4 pb-2 border-b-2 border-current/20 flex flex-col sm:flex-row justify-between items-start sm:items-center text-sm opacity-80 gap-2">
-          <div className="flex items-center gap-2">
-            <span className="font-bold uppercase tracking-wider text-blueprint-accent dark:text-crt-amber">{note.type}</span>
-            {note.language && (
-              <>
-                <span>•</span>
-                <span className="font-bold uppercase opacity-75">{note.language}</span>
-              </>
-            )}
+        <div className="mb-2.5 pb-2 border-b border-current/20 flex justify-between items-center text-xs sm:text-sm opacity-85 gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+            <button 
+              onClick={(e) => { e.preventDefault(); toggleFavorite(note.id); }}
+              className="hover:opacity-80 transition-opacity p-0.5"
+              title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Star size={14} className={`sm:w-4 sm:h-4 ${isFavorite ? "fill-blueprint-accent dark:fill-crt-amber text-blueprint-accent dark:text-crt-amber" : "text-blueprint-accent dark:text-crt-amber"} shrink-0`} />
+            </button>
+            <span className="font-bold uppercase tracking-wider text-[11px] sm:text-xs text-blueprint-accent dark:text-crt-amber">{note.type}</span>
             {locationText && (
               <>
-                <span>•</span>
-                <span>{locationText}</span>
+                <span className="opacity-50">•</span>
+                <span className="text-[11px] sm:text-xs opacity-75">{locationText}</span>
               </>
             )}
           </div>
-          <div className="text-left sm:text-right mt-1 sm:mt-0">
-            <div>{formatDate(note.date_added)}</div>
+          <div className="text-right text-[11px] sm:text-xs opacity-70 whitespace-nowrap shrink-0">
+            {formatDate(note.date_added)}
           </div>
         </div>
       )}
@@ -123,7 +136,7 @@ const NoteCard = ({ note, showMetadata = true }) => {
       <div className="mt-2">
         {note.type === 'Highlight' && (
           <div className="relative">
-            <p className="whitespace-pre-wrap pr-10">
+            <p className="whitespace-pre-wrap pr-10 text-sm sm:text-base">
               {note.content}
             </p>
             <div className="absolute top-0 right-0">
@@ -137,8 +150,8 @@ const NoteCard = ({ note, showMetadata = true }) => {
         )}
 
         {note.type === 'Note' && note.related_highlight && (
-          <div className="relative my-4">
-            <blockquote className="border-l-4 border-current pl-4 italic opacity-80 whitespace-pre-wrap pr-16">
+          <div className="relative my-3 sm:my-4">
+            <blockquote className="border-l-4 border-current pl-3 sm:pl-4 italic opacity-80 whitespace-pre-wrap pr-16 text-xs sm:text-sm">
               {note.related_highlight}
             </blockquote>
             <div className="absolute top-0 right-0 flex items-center gap-1">
@@ -149,7 +162,7 @@ const NoteCard = ({ note, showMetadata = true }) => {
               />
               <CopyButton 
                 text={getMarkdownContent(note.related_highlight, note.content)} 
-                tooltipLabel="Copy Both (Markdown)" 
+                tooltipLabel="Copy Both Note and Highlight" 
                 icon={<FileText size={14} />} 
               />
             </div>
@@ -157,7 +170,7 @@ const NoteCard = ({ note, showMetadata = true }) => {
         )}
         
         {note.type === 'Note' && (
-          <p className="whitespace-pre-wrap font-bold text-lg">
+          <p className="whitespace-pre-wrap font-bold text-base sm:text-lg">
             {note.content}
           </p>
         )}

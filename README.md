@@ -40,11 +40,21 @@ This application serves as a dedicated frontend for reading and organizing your 
 
 ### Building for Production
 
-To build the app for production (e.g., to host on GitHub Pages):
+To build the app for production:
 ```bash
 npm run build
 ```
 The bundled files will be generated in the `dist/` directory.
+
+### Deploying to GitHub Pages
+
+This project is configured to be easily deployed to GitHub Pages. The deployment script will automatically run tests, build the project, and push it to the `gh-pages` branch.
+
+To deploy, simply run:
+```bash
+npm run deploy
+```
+*(Make sure your repository's GitHub Pages settings are configured to serve from the `gh-pages` branch).*
 
 ---
 

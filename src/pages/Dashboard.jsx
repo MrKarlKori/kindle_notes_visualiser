@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotes } from '../context/NotesContext';
 import NoteCard from '../components/NoteCard';
+import StatsHeatmap from '../components/StatsHeatmap';
 
 const Dashboard = () => {
   const { 
@@ -13,18 +14,29 @@ const Dashboard = () => {
     setFilterType, 
     filterLanguage, 
     setFilterLanguage, 
-    availableLanguages 
+    filterFavorite,
+    setFilterFavorite,
+    availableLanguages,
+    favorites
   } = useNotes();
   const [sortOrder, setSortOrder] = useState('date-desc');
-
+  const [searchQuery, setSearchQuery] = useState('');
   const tabs = [
     { id: 'all', label: 'See All' },
+    { id: 'favorites', label: 'Favorites' },
     { id: 'authors', label: 'Authors' },
-    { id: 'books', label: 'Books' }
+    { id: 'books', label: 'Books' },
+    { id: 'stats', label: 'Stats' }
   ];
 
   const filteredNotes = useMemo(() => {
     return notes.filter(n => {
+      if (activeTab === 'favorites' && !favorites.includes(n.id)) {
+        return false;
+      }
+      if (filterFavorite === 'Favorites' && !favorites.includes(n.id)) {
+        return false;
+      }
       if (filterType !== 'All' && n.type !== filterType) {
         return false;
       }
@@ -36,9 +48,19 @@ const Dashboard = () => {
           return false;
         }
       }
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        if (
+          !(n.content && n.content.toLowerCase().includes(query)) &&
+          !(n.book_title && n.book_title.toLowerCase().includes(query)) &&
+          !(n.author && n.author.toLowerCase().includes(query))
+        ) {
+          return false;
+        }
+      }
       return true;
     });
-  }, [notes, filterType, filterLanguage]);
+  }, [notes, filterType, filterLanguage, filterFavorite, activeTab, favorites, searchQuery]);
 
   const sortedNotes = useMemo(() => {
     return [...filteredNotes].sort((a, b) => {
@@ -67,17 +89,25 @@ const Dashboard = () => {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [filteredNotes]);
 
+  const hasActiveFilters = filterLanguage !== 'All' || filterType !== 'All' || filterFavorite !== 'All' || searchQuery !== '';
+  const clearFilters = () => {
+    setFilterLanguage('All');
+    setFilterType('All');
+    setFilterFavorite('All');
+    setSearchQuery('');
+  };
+
   if (isLoading) return <div className="text-center animate-pulse mt-20 font-bold uppercase tracking-widest text-2xl">Loading Data...</div>;
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-2 border-current mb-6 pb-2 sm:pb-0 gap-4">
-        <div className="flex overflow-x-auto w-full sm:w-auto">
+      <div className="flex flex-wrap justify-between items-center border-b-2 border-current mb-6 pb-3 gap-3">
+        <div className="grid grid-cols-5 w-full lg:w-auto sm:flex gap-1">
           {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 uppercase font-bold border-2 border-transparent border-b-0 ${
+              className={`px-1 sm:px-4 py-1.5 sm:py-2 uppercase font-bold text-[10px] min-[380px]:text-xs sm:text-sm text-center border-2 border-transparent whitespace-nowrap truncate shrink-0 ${
                 activeTab === tab.id 
                   ? 'bg-blueprint-text text-blueprint-bg dark:bg-crt-text dark:text-crt-bg' 
                   : 'hover:bg-blueprint-text/10 dark:hover:bg-crt-text/10'
@@ -88,11 +118,20 @@ const Dashboard = () => {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end pb-2 sm:pb-0">
+        {activeTab !== "stats" && (
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 w-full lg:w-auto justify-start sm:justify-end items-center">
+          <input
+            type="text"
+            placeholder="Search notes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 text-xs sm:text-sm outline-none font-bold w-full sm:w-auto placeholder:text-current placeholder:opacity-50"
+          />
+          
           <select 
             value={filterLanguage} 
             onChange={e => setFilterLanguage(e.target.value)}
-            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-[48%] sm:w-auto truncate"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Languages</option>
             {availableLanguages.map(lang => (
@@ -105,28 +144,49 @@ const Dashboard = () => {
           <select 
             value={filterType} 
             onChange={e => setFilterType(e.target.value)}
-            className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+            className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
           >
             <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Types</option>
             <option value="Highlight" className="bg-blueprint-bg dark:bg-crt-bg text-current">Highlights Only</option>
             <option value="Note" className="bg-blueprint-bg dark:bg-crt-bg text-current">Notes Only</option>
           </select>
 
-          {activeTab === 'all' && (
+          {activeTab !== 'favorites' && (
+            <select 
+              value={filterFavorite} 
+              onChange={e => setFilterFavorite(e.target.value)}
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
+            >
+              <option value="All" className="bg-blueprint-bg dark:bg-crt-bg text-current">All Notes</option>
+              <option value="Favorites" className="bg-blueprint-bg dark:bg-crt-bg text-current">Favorites Only</option>
+            </select>
+          )}
+
+          {(activeTab === 'all' || activeTab === 'favorites') && (
             <select 
               value={sortOrder} 
               onChange={e => setSortOrder(e.target.value)}
-              className="bg-transparent border-2 border-current p-2 sm:p-1 uppercase text-sm outline-none font-bold cursor-pointer w-full sm:w-auto"
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm outline-none font-bold cursor-pointer w-full sm:w-auto truncate"
             >
               <option value="date-desc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Newest First</option>
               <option value="date-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Oldest First</option>
               <option value="title-asc" className="bg-blueprint-bg dark:bg-crt-bg text-current">Title A-Z</option>
             </select>
           )}
+
+          {hasActiveFilters && (
+            <button
+              onClick={clearFilters}
+              className="bg-transparent border-2 border-current p-1.5 sm:p-1 uppercase text-xs sm:text-sm font-bold cursor-pointer hover:bg-blueprint-text hover:text-blueprint-bg dark:hover:bg-crt-text dark:hover:text-crt-bg transition-colors"
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
+        )}
       </div>
 
-      {activeTab === 'all' && (
+      {(activeTab === 'all' || activeTab === 'favorites') && (
         <div>
           {sortedNotes.map(note => (
             <NoteCard key={note.id} note={note} />
@@ -152,6 +212,12 @@ const Dashboard = () => {
             ))}
           </div>
           {authors.length === 0 && <div className="text-center mt-10 uppercase tracking-widest opacity-70">No authors found matching current filter.</div>}
+        </div>
+      )}
+
+      {activeTab === 'stats' && (
+        <div className="mt-4">
+          <StatsHeatmap notes={notes} />
         </div>
       )}
 

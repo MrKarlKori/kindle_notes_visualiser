@@ -5,6 +5,7 @@
 @layer base {
   body {
     @apply font-mono transition-colors duration-300;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   
   html.dark body {
@@ -32,4 +33,14 @@ html.dark body::after {
   background-size: 100% 4px;
   z-index: 50;
   pointer-events: none;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
